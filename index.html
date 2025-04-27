@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Geladinhos da Vó</title>
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+ <div class="container">
+  <!-- Overlay para animação -->
+  <div class="overlay" style="display:none;"></div>
+
+  <!-- Tela de Entrada -->
+  <div id="tela-entrada" class="tela tela-entrada">
+   <button class="btn-grande azul" id="btn-entrar" onclick="animarEntrada()">
+    <i class="fas fa-sign-in-alt"></i>
+    Entrar
+   </button>
+  </div>
+
+  <!-- Modal de Exclusão de Sabores -->
+  <div id="modal-excluir-sabor" class="modal">
+   <div class="modal-conteudo">
+    <h2>Excluir Sabores</h2>
+    <div class="lista-sabores-excluir">
+     <!-- Lista de sabores será preenchida via JavaScript -->
+    </div>
+    <div class="botoes-modal">
+     <button class="btn-grande vermelho" onclick="confirmarExclusaoSabores()">
+      <i class="fas fa-trash"></i>
+      Excluir Selecionados
+     </button>
+     <button class="btn-grande azul" onclick="fecharModalExclusao()">
+      <i class="fas fa-times"></i>
+      Cancelar
+     </button>
+    </div>
+   </div>
+  </div>
+
+  <!-- Tela Inicial -->
+  <div id="tela-inicial" class="tela" style="display: none;">
+   <div class="logo">
+    <h1>Geladinhos da Vó</h1>
+    <p>Bem-vinda ao seu sistema de controle de vendas!</p>
+   </div>
+   <div class="data-hoje" id="data-hoje-menu"></div>
+   <div class="botoes-menu">
+    <button class="btn-grande verde" onclick="mostrarTela('cadastrar-venda')">
+     <i class="fas fa-cash-register"></i>
+     Cadastrar Venda
+    </button>
+
+    <button class="btn-grande azul" onclick="mostrarTela('ver-vendas')">
+     <i class="fas fa-list"></i>
+     Ver Vendas
+    </button>
+
+    <button class="btn-grande laranja" onclick="mostrarTela('estoque')">
+     <i class="fas fa-box"></i>
+     Controle de Estoque
+    </button>
+
+    <button class="btn-grande cinza" onclick="mostrarTela('configuracoes')">
+     <i class="fas fa-cog"></i>
+     Configurações
+    </button>
+
+    <button class="btn-grande azul" onclick="mostrarTela('dashboard')">
+     <i class="fas fa-chart-bar"></i>
+     Dashboard
+    </button>
+   </div>
+  </div>
+
+  <!-- Tela de Cadastro de Venda -->
+  <div id="cadastrar-venda" class="tela" style="display: none;">
+   <h2>Cadastrar Nova Venda</h2>
+   <div class="formulario">
+    <div class="campo">
+     <label>Sabor:</label>
+     <div class="input-icone">
+      <i class="fas fa-ice-cream"></i>
+      <select id="sabor-venda" class="input-grande" placeholder="Escolha o sabor">
+       <option value="">Selecione o sabor</option>
+      </select>
+     </div>
+    </div>
+
+    <div class="campo">
+     <label>Quantidade:</label>
+     <div class="input-icone">
+      <i class="fas fa-sort-numeric-up"></i>
+      <input type="number" id="quantidade-venda" class="input-grande" min="1" placeholder="Ex: 5">
+     </div>
+    </div>
+
+    <div class="campo">
+     <label>Preço Unitário:</label>
+     <div class="input-icone">
+      <i class="fas fa-money-bill-wave"></i>
+      <input type="number" id="preco-unitario" class="input-grande" step="0.01" placeholder="R$ 0,00">
+     </div>
+    </div>
+
+    <div class="campo">
+     <label>Total:</label>
+     <input type="text" id="total-venda" class="input-grande" readonly placeholder="Total da venda">
+    </div>
+
+    <div class="botoes">
+     <button class="btn-grande azul" onclick="salvarVenda()">
+      <i class="fas fa-save"></i>
+      Salvar Venda
+     </button>
+     <button class="btn-grande vermelho" onclick="mostrarTela('tela-inicial')">
+      <i class="fas fa-times"></i>
+      Cancelar
+     </button>
+    </div>
+   </div>
+  </div>
+
+  <!-- Tela de Ver Vendas -->
+  <div id="ver-vendas" class="tela" style="display: none;">
+   <h2>Vendas do Dia</h2>
+   <div class="data-hoje" id="data-hoje"></div>
+   <div class="lista-vendas">
+    <table>
+     <thead>
+      <tr>
+       <th>Data</th>
+       <th>Sabor</th>
+       <th>Quantidade</th>
+       <th>Valor Total</th>
+      </tr>
+     </thead>
+     <tbody id="lista-vendas-corpo">
+     </tbody>
+    </table>
+   </div>
+   <div class="total-dia">
+    <h3>Total Vendido Hoje: <span id="total-vendido-hoje">R$ 0,00</span></h3>
+   </div>
+   <button class="btn-grande azul" onclick="mostrarTela('tela-inicial')">
+    <i class="fas fa-home"></i>
+    Voltar
+   </button>
+  </div>
+
+  <!-- Tela de Estoque -->
+  <div id="estoque" class="tela" style="display: none;">
+   <h2>Controle de Estoque</h2>
+   <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+    <button class="btn-grande verde" id="btn-mostrar-form-novo-sabor" onclick="mostrarFormNovoSaborEstoque()">
+     <i class="fas fa-plus"></i>
+     Adicionar Novo Sabor ao Estoque
+    </button>
+    <button class="btn-grande vermelho" onclick="abrirModalExcluirEstoque()">
+     <i class="fas fa-trash"></i>
+     Excluir Estoque
+    </button>
+   </div>
+   <div class="formulario" id="form-novo-sabor-estoque" style="margin-bottom: 30px; display: none;">
+    <h3>Adicionar Novo Sabor ao Estoque</h3>
+    <div class="campo">
+     <label>Nome do Geladinho:</label>
+     <div class="input-icone">
+      <i class="fas fa-ice-cream"></i>
+      <input type="text" id="estoque-nome-sabor" class="input-grande" placeholder="Ex: Morango">
+     </div>
+    </div>
+    <div class="campo">
+     <label>Valor (R$):</label>
+     <div class="input-icone">
+      <i class="fas fa-money-bill-wave"></i>
+      <input type="number" id="estoque-valor-sabor" class="input-grande" step="0.01" placeholder="Ex: 2.50">
+     </div>
+    </div>
+    <div class="campo">
+     <label>Estoque Inicial:</label>
+     <div class="input-icone">
+      <i class="fas fa-boxes"></i>
+      <input type="number" id="estoque-quantidade-sabor" class="input-grande" placeholder="Ex: 50">
+     </div>
+    </div>
+    <button class="btn-grande verde" onclick="adicionarNovoSaborEstoque()">
+     <i class="fas fa-plus"></i>
+     Adicionar ao Estoque
+    </button>
+   </div>
+   <div id="lista-estoque" class="lista-estoque">
+   </div>
+   <button class="btn-grande azul" onclick="mostrarTela('tela-inicial')">
+    <i class="fas fa-home"></i>
+    Voltar
+   </button>
+  </div>
+
+  <!-- Modal de Exclusão de Estoque -->
+  <div id="modal-excluir-estoque" class="modal">
+   <div class="modal-conteudo">
+    <h2>Excluir Estoque</h2>
+    <div class="lista-sabores-excluir" id="lista-estoque-excluir">
+     <!-- Lista de sabores será preenchida via JavaScript -->
+    </div>
+    <div class="botoes-modal">
+     <button class="btn-grande vermelho" onclick="confirmarExclusaoEstoque()">
+      <i class="fas fa-trash"></i>
+      Excluir Selecionados
+     </button>
+     <button class="btn-grande azul" onclick="fecharModalExcluirEstoque()">
+      <i class="fas fa-times"></i>
+      Cancelar
+     </button>
+    </div>
+   </div>
+  </div>
+
+  <!-- Tela de Configurações -->
+  <div id="configuracoes" class="tela" style="display: none;">
+   <h2>Configurações</h2>
+   <div class="formulario">
+    <div class="campo">
+     <label class="switch">
+      <input type="checkbox" id="modo-dark" onchange="alternarModoDark()">
+      <span class="slider round"></span>
+     </label>
+     <span id="label-modo">Modo Escuro</span>
+    </div>
+    <button class="btn-grande verde" onclick="abrirSuporte()">
+     <i class="fab fa-whatsapp"></i>
+     Suporte (WhatsApp)
+    </button>
+   </div>
+   <button class="btn-grande azul" onclick="mostrarTela('tela-inicial')">
+    <i class="fas fa-home"></i>
+    Voltar
+   </button>
+  </div>
+
+  <!-- Tela de Dashboard -->
+  <div id="dashboard" class="tela" style="display: none;">
+   <h2>Dashboard de Vendas</h2>
+   <div class="dashboard-agenda" id="dashboard-agenda">
+    <!-- Calendário customizado será inserido aqui pelo JS -->
+   </div>
+   <div id="dashboard-conteudo" style="margin-top: 30px;"></div>
+   <button class="btn-grande azul" onclick="mostrarTela('tela-inicial')">
+    <i class="fas fa-home"></i>
+    Voltar
+   </button>
+  </div>
+ </div>
+
+ <!-- Toast de feedback -->
+ <div id="toast-feedback" class="toast-feedback"></div>
+ <!-- Rodapé -->
+ <footer class="rodape-gourmet">Assistente de Vendas</footer>
+
+ <script src="app.js"></script>
+</body>
+
+</html>
